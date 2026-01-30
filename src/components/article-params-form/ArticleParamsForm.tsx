@@ -4,7 +4,7 @@ import { Select } from 'src/ui/select';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 import { Text } from 'src/ui/text';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './ArticleParamsForm.module.scss';
 import {
 	fontFamilyOptions,
@@ -16,7 +16,7 @@ import {
 	contentWidthArr,
 } from 'src/constants/articleProps';
 
-type TFormValue = {
+export type TFormValue = {
 	fontFamily: OptionType;
 	fontColor: OptionType;
 	fontSize: OptionType;
@@ -24,7 +24,11 @@ type TFormValue = {
 	contentWidth: OptionType;
 };
 
-export const ArticleParamsForm = () => {
+export type TArticleParamsFormProps = {
+	articleChange: (value: TFormValue) => void;
+};
+
+export const ArticleParamsForm = (props: TArticleParamsFormProps) => {
 	const defaultValues = {
 		fontFamily: defaultArticleState.fontFamilyOption,
 		fontSize: defaultArticleState.fontSizeOption,
@@ -37,9 +41,39 @@ export const ArticleParamsForm = () => {
 
 	const [value, setValue] = useState<TFormValue>(defaultValues);
 
+	const rootRef = useRef<HTMLFormElement>(null);
+
 	const handleArrowButtonClick = () => {
 		setIsOpen((prevState) => !prevState);
 	};
+
+	const { articleChange } = props;
+
+	function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		articleChange(value);
+	}
+
+	function handleReset() {
+		articleChange(defaultValues);
+		setValue(defaultValues);
+	}
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+				setIsOpen(false);
+			}
+		};
+
+		if (isOpen) {
+			document.addEventListener('mousedown', handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [isOpen]);
 
 	return (
 		<>
@@ -48,7 +82,11 @@ export const ArticleParamsForm = () => {
 				className={`${styles.container} ${
 					isOpen ? styles.container_open : ''
 				}`}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}
+					ref={rootRef}>
 					<Text as='h2' size={31} weight={800} uppercase>
 						{'Задайте параметры'}
 					</Text>
