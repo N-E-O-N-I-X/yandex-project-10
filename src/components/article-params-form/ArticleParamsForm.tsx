@@ -6,6 +6,7 @@ import { Separator } from 'src/ui/separator';
 import { Text } from 'src/ui/text';
 import { useState, useRef, useEffect } from 'react';
 import styles from './ArticleParamsForm.module.scss';
+import clsx from 'clsx';
 import {
 	fontFamilyOptions,
 	OptionType,
@@ -79,9 +80,9 @@ export const ArticleParamsForm = (props: TArticleParamsFormProps) => {
 		<>
 			<ArrowButton isOpen={isOpen} onClick={handleArrowButtonClick} />
 			<aside
-				className={`${styles.container} ${
-					isOpen ? styles.container_open : ''
-				}`}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}

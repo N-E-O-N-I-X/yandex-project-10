@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client';
 import { StrictMode, CSSProperties, useState } from 'react';
-import clsx from 'clsx';
 import {
 	ArticleParamsForm,
 	TFormValue,
@@ -26,7 +25,7 @@ const App = () => {
 
 	return (
 		<main
-			className={clsx(styles.main)}
+			className={styles.main}
 			style={
 				{
 					'--font-family': value.fontFamily.value,
